@@ -12,9 +12,7 @@
 //  WinMain.cpp - entry point of programm
 //--------------------------------------------------------------------------------------
 
-#include "windows.h"
-
-#define MAX_NAME_STRING 256
+#include "pch/pch.h"
 
 // Global Variables
 HINSTANCE               g_hInst = nullptr;
