@@ -16,6 +16,7 @@
 
 // Global Variables
 HINSTANCE               g_hInst = nullptr;
+HICON                   hIcon;
 UINT                    WindowWidth = 1280;
 UINT                    WindowHeight = 720;
 WCHAR                   WindowClass[MAX_NAME_STRING];
@@ -56,8 +57,9 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
     wcscpy_s(WindowClass, TEXT("WindowClass"));
     wcscpy_s(WindowTitle, TEXT("Cringe Engine"));
+    hIcon = LoadIcon(hInstance(), MAKEINTRESOURCE(IDI_MAINICON));
 
-    // Register class
+    // Register window class
     WNDCLASSEX wcex;
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -65,7 +67,7 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow)
     wcex.cbClsExtra = 0;
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;
-    wcex.hIcon = 0;
+    wcex.hIcon = hIcon;
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground = nullptr;
     wcex.lpszMenuName = nullptr;

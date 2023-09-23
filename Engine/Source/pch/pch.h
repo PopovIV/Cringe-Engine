@@ -1,7 +1,9 @@
 #pragma once
 
+// includes
+#include "../../resource.h"
+#include "windows.h"
+
 // defines
 #define MAX_NAME_STRING 256
-
-// includes
-#include "windows.h"
+#define hInstance() GetModuleHandle(NULL)
