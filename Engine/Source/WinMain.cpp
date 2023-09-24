@@ -14,8 +14,12 @@
 
 #include "pch/pch.h"
 
+#include "render/renderer.h"
+
 // Global Variables
-HINSTANCE               g_hInst = nullptr;
+HINSTANCE               g_hInst;
+HWND                    g_hWnd;
+Renderer*        pRenderer = nullptr;
 HICON                   hIcon;
 UINT                    WindowWidth = 1280;
 UINT                    WindowHeight = 720;
@@ -34,8 +38,16 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+    // Init window
     if (FAILED(InitWindow(hInstance, nCmdShow))) {
-        MessageBox(0, L"Failed to Create Window!.", 0, 0);
+        MessageBox(0, L"Failed to Create Window!", 0, 0);
+        return FALSE;
+    }
+
+    // Init renderer
+    pRenderer = new Renderer();
+    if (!SUCCEEDED(pRenderer->Init(g_hInst, g_hWnd))) {
+        MessageBox(0, L"Failed to Initialize Renderer!", 0, 0);
         return FALSE;
     }
 
@@ -46,7 +58,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        pRenderer->Render();
     }
+
+    // Delete all resources
+    pRenderer->Term();
+    SAFE_DELETE(pRenderer);
 
     return (int)msg.wParam;
 }
@@ -55,6 +72,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 // Register class and create window
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow)
 {
+    // Initializing global variables
     wcscpy_s(WindowClass, TEXT("WindowClass"));
     wcscpy_s(WindowTitle, TEXT("Cringe Engine"));
     hIcon = LoadIcon(hInstance(), MAKEINTRESOURCE(IDI_MAINICON));
@@ -85,6 +103,7 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow)
     if (!hWnd) {
         return E_FAIL;
     }
+    g_hWnd = hWnd;
 
     ShowWindow(hWnd, nCmdShow);
 
