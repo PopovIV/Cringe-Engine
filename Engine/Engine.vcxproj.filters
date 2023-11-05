@@ -1,54 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Resources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Resources\Icons">
-      <UniqueIdentifier>{a84e0ad0-9d38-484f-bc7c-50b43a069990}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Renderer">
-      <UniqueIdentifier>{35a8b977-7666-4421-b477-df84fad91947}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\pch">
-      <UniqueIdentifier>{e6bfd412-9606-4c43-9b01-47f9f257634f}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Content\Icons\eye_icon.ico">
-      <Filter>Resources\Icons</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="resource.h">
-      <Filter>Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\render\renderer.h">
-      <Filter>Source\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\pch\pch.h">
-      <Filter>Source\pch</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Engine.rc">
-      <Filter>Resources</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\WinMain.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="WinMain.cpp" />
+    <ClCompile Include="application.cpp">
+      <Filter>application</Filter>
     </ClCompile>
-    <ClCompile Include="Source\render\renderer.cpp">
-      <Filter>Source\Renderer</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>pch</Filter>
     </ClCompile>
-    <ClCompile Include="Source\pch\pch.cpp">
-      <Filter>Source\pch</Filter>
+    <ClCompile Include="renderer.cpp">
+      <Filter>render</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="application.h">
+      <Filter>application</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="application">
+      <UniqueIdentifier>{45c43734-5bf2-4cb9-9d8b-a76b4dae66bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{1c14e677-199a-447f-8e8e-9f452300f908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render">
+      <UniqueIdentifier>{6c6b3eef-d9d1-4eda-b2cf-b9b44cae88cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{bc1087b9-3bf9-4403-af19-f6a03a59d544}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shaders\pixelShader.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="shaders\vertexShader.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="content\icons\eye_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
 </Project>
