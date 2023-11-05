@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -11,11 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{448BC0D5-865E-445F-9370-FC486AF43E1B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{f504d6ce-636b-4dc7-b695-b97d3ec61232}</ProjectGuid>
-    <RootNamespace>Engine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <RootNamespace>D3D12HelloTriangle</RootNamespace>
+    <ProjectName>Engine</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -34,90 +34,116 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)\Build\$(ProjectName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\Intermidiate\$(Configuration)\</IntDir>
+    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)\Build\$(ProjectName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)\Intermidiate\$(Configuration)\</IntDir>
+    <OutDir>bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
     </Link>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+    <FxCompile>
+      <EntryPointName />
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch/pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>d3d12.dll</DelayLoadDLLs>
     </Link>
+    <CustomBuildStep>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuildStep>
+    <CustomBuild>
+      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
+      <Outputs>$(OutDir)\%(Identity)</Outputs>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+    <FxCompile>
+      <EntryPointName />
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\pch\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
+    <ClInclude Include="application.h" />
+    <ClInclude Include="renderer.h" />
+    <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="helpers.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="application.cpp" />
+    <ClCompile Include="renderer.cpp" />
+    <ClCompile Include="WinMain.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\render\renderer.cpp">
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeaderFile>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Source\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Content\Icons\eye_icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Source\pch\pch.h" />
-    <ClInclude Include="Source\render\renderer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Engine.rc" />
+    <FxCompile Include="shaders\pixelShader.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PSMain</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shaders\vertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
