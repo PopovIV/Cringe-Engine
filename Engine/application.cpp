@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "resource.h"
 #include "application.h"
 
 HWND Application::hwnd = nullptr;
@@ -35,7 +36,7 @@ void Application::InitWindow(Renderer* pRenderer, HINSTANCE hInstance, INT nCmdS
 {
     const WCHAR* windowClassName = L"WindowClass";
     const WCHAR* WindowTitle = L"Cringe Engine";
-    //HICON hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MAINICON));
+    HICON hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MAINICON));
 
     // Register window class
     WNDCLASSEX windowClass = { 0 };
@@ -45,7 +46,7 @@ void Application::InitWindow(Renderer* pRenderer, HINSTANCE hInstance, INT nCmdS
     windowClass.cbClsExtra = 0;
     windowClass.cbWndExtra = 0;
     windowClass.hInstance = hInstance;
-    //windowClass.hIcon = hIcon;
+    windowClass.hIcon = hIcon;
     windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     windowClass.hbrBackground = nullptr;
     windowClass.lpszMenuName = nullptr;
