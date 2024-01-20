@@ -39,14 +39,16 @@ void Renderer::OnRender()
     // Present the frame.
     ThrowIfFailed(pSwapChain->Present(1, 0));
 
-    WaitForPreviousFrame();
+    MoveToNextFrame();
 }
 
 
 // Terminate all resources
 void Renderer::OnDestroy()
 {
-    WaitForPreviousFrame();
+    // Ensure that the GPU is no longer referencing resources that are about to be
+    // cleaned up by the destructor.
+    WaitForGpu();
 
     CloseHandle(fenceEvent);
 }
@@ -137,10 +139,10 @@ void Renderer::LoadPipeline()
             ThrowIfFailed(pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pRenderTargets[i])));
             pDevice->CreateRenderTargetView(pRenderTargets[i].Get(), nullptr, rtvHandle);
             rtvHandle.Offset(1, rtvDescriptorSize);
+
+            ThrowIfFailed(pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&pCommandAllocators[i])));
         }
     }
-
-    ThrowIfFailed(pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&pCommandAllocator)));
 }
 
 
@@ -198,7 +200,7 @@ void Renderer::LoadAssets()
     }
 
     // Create the command list
-    ThrowIfFailed(pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, pCommandAllocator.Get(), pPipelineState.Get(), IID_PPV_ARGS(&pCommandList)));
+    ThrowIfFailed(pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, pCommandAllocators[frameIndex].Get(), pPipelineState.Get(), IID_PPV_ARGS(&pCommandList)));
 
     // Command lists are created in the recording state, but there is nothing
     // to record yet. The main loop expects it to be closed, so close it now
@@ -246,7 +248,7 @@ void Renderer::LoadAssets()
     // Create synchronization objects and wait until assets have been uploaded to the GPU
     {
         ThrowIfFailed(pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
-        fenceValue = 1;
+        fenceValues[frameIndex]++;
 
         // Create an event handle to use for frame synchronization.
         fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -256,8 +258,8 @@ void Renderer::LoadAssets()
 
         // Wait for the command list to execute; we are reusing the same command 
         // list in our main loop but for now, we just want to wait for setup to 
-        // complete before continuing
-        WaitForPreviousFrame();
+        // complete before continuing.
+        WaitForGpu();
     }
 }
 
@@ -267,12 +269,12 @@ void Renderer::PopulateCommandList()
     // Command list allocators can only be reset when the associated 
     // command lists have finished execution on the GPU; apps should use 
     // fences to determine GPU execution progress
-    ThrowIfFailed(pCommandAllocator->Reset());
+    ThrowIfFailed(pCommandAllocators[frameIndex]->Reset());
 
     // However, when ExecuteCommandList() is called on a particular command 
     // list, that command list can then be reset at any time and must be before 
     // re-recording
-    ThrowIfFailed(pCommandList->Reset(pCommandAllocator.Get(), pPipelineState.Get()));
+    ThrowIfFailed(pCommandList->Reset(pCommandAllocators[frameIndex].Get(), pPipelineState.Get()));
 
     // Set necessary state.
     pCommandList->SetGraphicsRootSignature(pRootSignature.Get());
@@ -299,18 +301,35 @@ void Renderer::PopulateCommandList()
 }
 
 
-void Renderer::WaitForPreviousFrame()
+void Renderer::MoveToNextFrame()
 {
-    // Signal and increment the fence value
-    const UINT64 fenceVal = fenceValue;
-    ThrowIfFailed(pCommandQueue->Signal(fence.Get(), fenceVal));
-    fenceValue++;
+    // Schedule a Signal command in the queue.
+    const UINT64 curFenceValue = fenceValues[frameIndex];
+    ThrowIfFailed(pCommandQueue->Signal(fence.Get(), curFenceValue));
 
-    // Wait until the previous frame is finished
-    if (fence->GetCompletedValue() < fenceVal) {
-        ThrowIfFailed(fence->SetEventOnCompletion(fenceVal, fenceEvent));
-        WaitForSingleObject(fenceEvent, INFINITE);
+    // Update the frame index.
+    frameIndex = pSwapChain->GetCurrentBackBufferIndex();
+
+    // If the next frame is not ready to be rendered yet, wait until it is ready.
+    if (fence->GetCompletedValue() < fenceValues[frameIndex]) {
+        ThrowIfFailed(fence->SetEventOnCompletion(fenceValues[frameIndex], fenceEvent));
+        WaitForSingleObjectEx(fenceEvent, INFINITE, FALSE);
     }
 
-    frameIndex = pSwapChain->GetCurrentBackBufferIndex();
+    // Set the fence value for the next frame.
+    fenceValues[frameIndex] = curFenceValue + 1;
+}
+
+
+void Renderer::WaitForGpu()
+{
+    // Schedule a Signal command in the queue.
+    ThrowIfFailed(pCommandQueue->Signal(fence.Get(), fenceValues[frameIndex]));
+
+    // Wait until the fence has been processed.
+    ThrowIfFailed(fence->SetEventOnCompletion(fenceValues[frameIndex], fenceEvent));
+    WaitForSingleObjectEx(fenceEvent, INFINITE, FALSE);
+
+    // Increment the fence value for the current frame.
+    fenceValues[frameIndex]++;
 }

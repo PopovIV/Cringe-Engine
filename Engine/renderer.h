@@ -45,7 +45,7 @@ private:
     ComPtr<IDXGISwapChain3> pSwapChain;
     ComPtr<ID3D12Device> pDevice;
     ComPtr<ID3D12Resource> pRenderTargets[FrameCount];
-    ComPtr<ID3D12CommandAllocator> pCommandAllocator;
+    ComPtr<ID3D12CommandAllocator> pCommandAllocators[FrameCount];
     ComPtr<ID3D12CommandQueue> pCommandQueue;
     ComPtr<ID3D12RootSignature> pRootSignature;
     ComPtr<ID3D12DescriptorHeap> pRtvHeap;
@@ -61,11 +61,12 @@ private:
     UINT frameIndex;
     HANDLE fenceEvent;
     ComPtr<ID3D12Fence> fence;
-    UINT64 fenceValue;
+    UINT64 fenceValues[FrameCount];
 
     // Load the rendering pipeline dependencies
     void LoadPipeline();
     void LoadAssets();
     void PopulateCommandList();
-    void WaitForPreviousFrame();
+    void MoveToNextFrame();
+    void WaitForGpu();
 };
